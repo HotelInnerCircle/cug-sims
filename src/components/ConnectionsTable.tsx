@@ -113,6 +113,18 @@ export function ConnectionsTable({
                       key={`${r.mobile}-${i}`}
                       className='transition-all duration-200 group hover:bg-blue-50/60'
                     >
+                      {' '}
+                      {/* NAME */}
+                      <td className='px-5 py-4'>
+                        <div>
+                          <p
+                            className='max-w-[180px] truncate font-semibold text-slate-800'
+                            title={r.name}
+                          >
+                            {r.name || '—'}
+                          </p>
+                        </div>
+                      </td>
                       {/* MOBILE */}
                       <td className='px-5 py-4 whitespace-nowrap'>
                         <div className='inline-flex items-center px-3 py-2 rounded-xl bg-slate-100'>
@@ -125,19 +137,6 @@ export function ConnectionsTable({
                           </span>
                         </div>
                       </td>
-
-                      {/* NAME */}
-                      <td className='px-5 py-4'>
-                        <div>
-                          <p
-                            className='max-w-[180px] truncate font-semibold text-slate-800'
-                            title={r.name}
-                          >
-                            {r.name || '—'}
-                          </p>
-                        </div>
-                      </td>
-
                       {/* COMPANY */}
                       <td className='px-5 py-4 '>
                         <span
@@ -148,7 +147,6 @@ export function ConnectionsTable({
                           {r.company}
                         </span>
                       </td>
-
                       {/* DEPARTMENT */}
                       <td className='px-5 py-4'>
                         <span
@@ -158,7 +156,6 @@ export function ConnectionsTable({
                           {r.department || '—'}
                         </span>
                       </td>
-
                       {/* DESIGNATION */}
                       <td className='px-5 py-4'>
                         <span
@@ -168,17 +165,6 @@ export function ConnectionsTable({
                           {r.designation || '—'}
                         </span>
                       </td>
-
-                      {/* LOCATION */}
-                      <td className='px-5 py-4'>
-                        <span
-                          className='block max-w-[160px] truncate text-slate-500 text-xs'
-                          title={r.location}
-                        >
-                          {r.location || '—'}
-                        </span>
-                      </td>
-
                       {/* NETWORK */}
                       <td className='px-5 py-4'>
                         {r.network ? (
@@ -193,7 +179,6 @@ export function ConnectionsTable({
                           <span className='text-slate-400'>—</span>
                         )}
                       </td>
-
                       {/* PLAN */}
                       <td className='px-5 py-4'>
                         <span
@@ -208,7 +193,6 @@ export function ConnectionsTable({
                               : r.plan_type || '—'}
                         </span>
                       </td>
-
                       {/* PAID BY */}
                       <td className='px-5 py-4'>
                         <span
@@ -218,12 +202,10 @@ export function ConnectionsTable({
                           {r.paid_by || '—'}
                         </span>
                       </td>
-
                       {/* FANCY TIER */}
                       <td className='px-5 py-4'>
                         <TierBadge tier={r.fancy_tier} />
                       </td>
-
                       {/* REMARK */}
                       <td className='px-5 py-4'>
                         <div className='flex items-start gap-2'>

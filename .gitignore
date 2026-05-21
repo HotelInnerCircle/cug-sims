@@ -1,4 +1,18 @@
-node_modules
+# dependencies
+/node_modules
+
+# next build
+/.next/
+/out/
+
+# environment variables
 .env.local
-.next
-.claude
+
+# vercel
+.vercel/
+
+# claude
+.claude/
+
+# typescript
+tsconfig.tsbuildinfo
