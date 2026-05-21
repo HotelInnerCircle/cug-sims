@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\BROADDCAST\\\\Downloads\\\\saboo-cug\" -Recurse -Force)",
-      "Bash(Select-Object FullName)",
-      "Bash(Sort-Object FullName)"
-    ]
-  }
-}
