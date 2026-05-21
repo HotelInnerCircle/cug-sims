@@ -77,7 +77,7 @@ export function ConnectionsTable({
                   'Company',
                   'Department',
                   'Designation',
-                  'Location',
+                  // 'Location',
                   'Network',
                   'Plan',
                   'Paid By',
