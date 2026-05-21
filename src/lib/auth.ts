@@ -2,9 +2,10 @@ import { SignJWT, jwtVerify } from 'jose'
 import type { NextRequest } from 'next/server'
 
 export interface TokenPayload {
-  userId: string
+  userId?: string
   email: string
-  name: string
+  name?: string
+  role?: string
 }
 
 function getSecret(): Uint8Array {

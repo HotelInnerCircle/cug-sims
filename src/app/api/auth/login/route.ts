@@ -5,24 +5,27 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const email = (body.email || "")
+    const email: string = (body.email || "")
       .trim()
       .toLowerCase();
 
-    const password = body.password || "";
+    const password: string =
+      body.password || "";
 
     // ENV credentials
-    const adminEmail =
-      process.env.ADMIN_EMAIL?.toLowerCase();
+    const adminEmail: string =
+      process.env.ADMIN_EMAIL?.toLowerCase() ??
+      "";
 
-    const adminPassword =
-      process.env.ADMIN_PASSWORD;
+    const adminPassword: string =
+      process.env.ADMIN_PASSWORD ?? "";
 
     // Validation
     if (!email || !password) {
       return NextResponse.json(
         {
-          error: "Email and password are required",
+          error:
+            "Email and password are required",
         },
         { status: 400 }
       );
@@ -35,13 +38,14 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         {
-          error: "Invalid email or password",
+          error:
+            "Invalid email or password",
         },
         { status: 401 }
       );
     }
 
-    // Generate token
+    // Generate JWT token
     const token = await signToken({
       email: adminEmail,
       role: "admin",
@@ -55,11 +59,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Cookie
+    // Set Cookie
     response.cookies.set("auth-token", token, {
       httpOnly: true,
       secure:
-        process.env.NODE_ENV === "production",
+        process.env.NODE_ENV ===
+        "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",

@@ -12,7 +12,7 @@ export default async function Home() {
 
   if (token) {
     const user = await verifyToken(token)
-    if (user) userName = user.name
+    if (user) userName = user.name ?? 'Admin'
   }
 
   await connectDB()
