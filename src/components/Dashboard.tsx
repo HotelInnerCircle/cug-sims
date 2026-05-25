@@ -91,99 +91,215 @@ export function Dashboard({ connections, userName = "Admin" }: DashboardProps) {
     <div className="min-h-screen text-black bg-white">
 
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md">
-        <div className="flex flex-wrap items-center gap-4 px-6 py-3 mx-auto max-w-screen-2xl">
+<header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-2xl">
+  <div className="px-4 mx-auto max-w-screen-2xl lg:px-6">
+    <div className="flex flex-wrap items-center justify-between gap-4 py-3">
 
-          {/* Brand */}
-          <div className="flex items-center flex-shrink-0 gap-3">
-            <div className="flex items-center justify-center w-8 h-8 shadow-lg rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-indigo-500/30">
-              <span className="text-sm font-bold text-white">S</span>
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-sm font-semibold leading-none text-slate-100">Saboo CUG</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                {connections.length} connections · HIC · RKS · SAZ
-              </p>
+      {/* Left Section */}
+      <div className="flex items-center gap-4">
+
+        {/* Brand */}
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="absolute inset-0 rounded-2xl blur-lg bg-indigo-500/40"></div>
+
+            <div className="relative flex items-center justify-center text-white shadow-xl w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 shadow-indigo-500/30">
+              <span className="text-lg font-black tracking-wide">S</span>
             </div>
           </div>
 
-          {/* Tab Navigation */}
-          <nav className="flex items-center gap-1 p-1 rounded-xl bg-slate-900 border border-slate-800">
-            <button
-              onClick={() => setActiveTab("dashboard")}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
-                activeTab === "dashboard"
-                  ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/30"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-              Dashboard
-            </button>
-            <button
-              onClick={() => setActiveTab("billing")}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
-                activeTab === "billing"
-                  ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/30"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-              </svg>
-              Billing
-            </button>
-          </nav>
+          <div>
+            <h1 className="text-sm font-bold tracking-wide text-white sm:text-base">
+              Saboo CUG Portal
+            </h1>
 
-          {/* Dashboard filters — only shown on dashboard tab */}
-          {activeTab === "dashboard" && (
-            <div className="flex flex-wrap justify-center flex-1 gap-2">
-              <input
-                type="text"
-                placeholder="Search name, number, dept…"
-                className="filter-input w-52"
-                value={filters.search}
-                onChange={(e) => setFilter("search", e.target.value)}
-              />
-              <select
-                className="filter-input"
-                value={filters.network}
-                onChange={(e) => setFilter("network", e.target.value)}
-              >
-                <option value="">All networks</option>
-                <option>Airtel</option>
-                <option>Vodafone</option>
-                <option>Jio</option>
-                <option>Vi</option>
-              </select>
-              <select
-                className="filter-input"
-                value={filters.plan}
-                onChange={(e) => setFilter("plan", e.target.value)}
-              >
-                <option value="">All plans</option>
-                <option value="post">Postpaid</option>
-                <option value="pre">Prepaid</option>
-              </select>
+            <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
+              <span>{connections.length} Connections</span>
+
+              <span className="w-1 h-1 rounded-full bg-slate-600"></span>
+
+              <span>HIC</span>
+
+              <span className="w-1 h-1 rounded-full bg-slate-600"></span>
+
+              <span>RKS</span>
+
+              <span className="w-1 h-1 rounded-full bg-slate-600"></span>
+
+              <span>SAZ</span>
             </div>
-          )}
-
-          {activeTab === "billing" && <div className="flex-1" />}
-
-          {/* User area */}
-          <div className="flex items-center gap-2.5 flex-shrink-0">
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
-              <span className="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-[10px] font-bold text-white">
-                {userName.charAt(0).toUpperCase()}
-              </span>
-              <span className="text-xs font-medium text-slate-300">{userName}</span>
-            </div>
-            <LogoutButton />
           </div>
         </div>
-      </header>
+
+        {/* Navigation */}
+        <div className="items-center hidden p-1 border shadow-inner md:flex rounded-2xl bg-white/5 border-white/10 backdrop-blur-xl">
+          <button
+            onClick={() => setActiveTab("dashboard")}
+            className={`relative px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center gap-2
+              ${
+                activeTab === "dashboard"
+                  ? "bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/25"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              }`}
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+              />
+            </svg>
+
+            Dashboard
+          </button>
+
+          <button
+            onClick={() => setActiveTab("billing")}
+            className={`relative px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center gap-2
+              ${
+                activeTab === "billing"
+                  ? "bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/25"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              }`}
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+              />
+            </svg>
+
+            Billing
+          </button>
+        </div>
+      </div>
+
+      {/* Center Filters */}
+      {activeTab === "dashboard" && (
+        <div className="flex flex-wrap items-center justify-center flex-1 gap-3">
+
+          {/* Search */}
+          <div className="relative">
+            <svg
+              className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"
+              />
+            </svg>
+
+            <input
+              type="text"
+              placeholder="Search employee, number, department..."
+              className="w-64 py-2 pl-10 pr-4 text-sm border rounded-xl bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+              value={filters.search}
+              onChange={(e) => setFilter("search", e.target.value)}
+            />
+          </div>
+
+          {/* Network */}
+          {/* <select
+            className="px-4 py-2 text-sm border outline-none rounded-xl bg-white/5 border-white/10 text-slate-300 focus:ring-2 focus:ring-indigo-500/40"
+            value={filters.network}
+            onChange={(e) => setFilter("network", e.target.value)}
+          >
+            <option value="">All Networks</option>
+            <option>Airtel</option>
+            <option>Vodafone</option>
+            <option>Jio</option>
+            <option>Vi</option>
+          </select> */}
+
+          {/* Plan */}
+          {/* <select
+            className="px-4 py-2 text-sm border outline-none rounded-xl bg-white/5 border-white/10 text-slate-300 focus:ring-2 focus:ring-indigo-500/40"
+            value={filters.plan}
+            onChange={(e) => setFilter("plan", e.target.value)}
+          >
+            <option value="">All Plans</option>
+            <option value="post">Postpaid</option>
+            <option value="pre">Prepaid</option>
+          </select> */}
+        </div>
+      )}
+
+      {activeTab === "billing" && (
+        <div className="flex-1 hidden lg:block">
+          <div className="px-4 py-2 border rounded-xl w-fit bg-emerald-500/10 border-emerald-500/20">
+            <p className="text-xs font-medium text-emerald-400">
+              Billing Management Active
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Right Section */}
+      <div className="flex items-center gap-3">
+
+        {/* Notification */}
+        <button className="relative flex items-center justify-center w-10 h-10 transition-all border rounded-xl bg-white/5 border-white/10 hover:bg-white/10">
+          <svg
+            className="w-5 h-5 text-slate-300"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0m6 0H9"
+            />
+          </svg>
+
+          <span className="absolute w-2.5 h-2.5 bg-rose-500 rounded-full top-2 right-2 animate-pulse"></span>
+        </button>
+
+        {/* User */}
+        <div className="items-center hidden gap-3 px-3 py-2 border sm:flex rounded-2xl bg-white/5 border-white/10 backdrop-blur-xl">
+
+          <div className="flex items-center justify-center w-10 h-10 text-sm font-bold text-white shadow-lg rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600">
+            {userName.charAt(0).toUpperCase()}
+          </div>
+
+          <div className="leading-tight">
+            <p className="text-sm font-semibold text-white">
+              {userName}
+            </p>
+
+            <p className="text-[11px] text-slate-400">
+              Administrator
+            </p>
+          </div>
+        </div>
+
+        {/* Logout */}
+        <div className="ml-1">
+          <LogoutButton />
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
 
       {/* ── DASHBOARD TAB ── */}
       {activeTab === "dashboard" && (
