@@ -10,6 +10,15 @@ const RemarkSchema = new Schema(
   { _id: false }
 )
 
+const BillingEmailLogSchema = new Schema(
+  {
+    days_remaining: { type: Number, required: true },
+    sent_at: { type: Date, default: Date.now },
+    cycle: { type: String, default: '' }, // e.g. "2026-05"
+  },
+  { _id: false }
+)
+
 const ConnectionSchema = new Schema(
   {
     company: { type: String, required: true },
@@ -23,6 +32,16 @@ const ConnectionSchema = new Schema(
     location: { type: String, default: '' },
     fancy_tier: { type: Number, default: null },
     remark: { type: RemarkSchema, default: () => ({}) },
+    // Billing fields
+    billing_amount: { type: Number, default: 0 },
+    plan_start_date: { type: Date, default: null },
+    plan_expiry_date: { type: Date, default: null },
+    billing_status: {
+      type: String,
+      enum: ['active', 'expiring_soon', 'expired'],
+      default: 'active',
+    },
+    billing_email_log: { type: [BillingEmailLogSchema], default: [] },
   },
   { timestamps: true }
 )

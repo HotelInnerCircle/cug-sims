@@ -7,15 +7,19 @@ import { TierCard } from "@/components/TierCard";
 import { ConnectionsTable } from "@/components/ConnectionsTable";
 import { Charts } from "@/components/Charts";
 import { LogoutButton } from "@/components/LogoutButton";
+import { BillingTable } from "@/components/BillingTable";
 
 interface DashboardProps {
   connections: Connection[];
   userName?: string;
 }
 
+type Tab = "dashboard" | "billing";
+
 const PER_PAGE = 20;
 
 export function Dashboard({ connections, userName = "Admin" }: DashboardProps) {
+  const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [filters, setFilters] = useState<Filters>({
     search: "",
     company: "",
@@ -96,43 +100,77 @@ export function Dashboard({ connections, userName = "Admin" }: DashboardProps) {
               <span className="text-sm font-bold text-white">S</span>
             </div>
             <div className="hidden sm:block">
-              <p className="text-sm font-semibold leading-none text-slate-100">Saboo CUG Dashboard</p>
+              <p className="text-sm font-semibold leading-none text-slate-100">Saboo CUG</p>
               <p className="text-[11px] text-slate-500 mt-0.5">
                 {connections.length} connections · HIC · RKS · SAZ
               </p>
             </div>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap justify-center flex-1 gap-2">
-            <input
-              type="text"
-              placeholder="Search name, number, dept…"
-              className="filter-input w-52"
-              value={filters.search}
-              onChange={(e) => setFilter("search", e.target.value)}
-            />
-            <select
-              className="filter-input"
-              value={filters.network}
-              onChange={(e) => setFilter("network", e.target.value)}
+          {/* Tab Navigation */}
+          <nav className="flex items-center gap-1 p-1 rounded-xl bg-slate-900 border border-slate-800">
+            <button
+              onClick={() => setActiveTab("dashboard")}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+                activeTab === "dashboard"
+                  ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/30"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
             >
-              <option value="">All networks</option>
-              <option>Airtel</option>
-              <option>Vodafone</option>
-              <option>Jio</option>
-              <option>Vi</option>
-            </select>
-            <select
-              className="filter-input"
-              value={filters.plan}
-              onChange={(e) => setFilter("plan", e.target.value)}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+              Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab("billing")}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+                activeTab === "billing"
+                  ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/30"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
             >
-              <option value="">All plans</option>
-              <option value="post">Postpaid</option>
-              <option value="pre">Prepaid</option>
-            </select>
-          </div>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              Billing
+            </button>
+          </nav>
+
+          {/* Dashboard filters — only shown on dashboard tab */}
+          {activeTab === "dashboard" && (
+            <div className="flex flex-wrap justify-center flex-1 gap-2">
+              <input
+                type="text"
+                placeholder="Search name, number, dept…"
+                className="filter-input w-52"
+                value={filters.search}
+                onChange={(e) => setFilter("search", e.target.value)}
+              />
+              <select
+                className="filter-input"
+                value={filters.network}
+                onChange={(e) => setFilter("network", e.target.value)}
+              >
+                <option value="">All networks</option>
+                <option>Airtel</option>
+                <option>Vodafone</option>
+                <option>Jio</option>
+                <option>Vi</option>
+              </select>
+              <select
+                className="filter-input"
+                value={filters.plan}
+                onChange={(e) => setFilter("plan", e.target.value)}
+              >
+                <option value="">All plans</option>
+                <option value="post">Postpaid</option>
+                <option value="pre">Prepaid</option>
+              </select>
+            </div>
+          )}
+
+          {activeTab === "billing" && <div className="flex-1" />}
 
           {/* User area */}
           <div className="flex items-center gap-2.5 flex-shrink-0">
@@ -147,97 +185,116 @@ export function Dashboard({ connections, userName = "Admin" }: DashboardProps) {
         </div>
       </header>
 
-      <main className="px-6 py-6 mx-auto space-y-5 max-w-screen-2xl">
+      {/* ── DASHBOARD TAB ── */}
+      {activeTab === "dashboard" && (
+        <main className="px-6 py-6 mx-auto space-y-5 max-w-screen-2xl">
 
-        {/* Metrics */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          <MetricCard
-            label="Total connections"
-            value={stats.total}
-            sub={filters.company || "All companies"}
-          />
-          <MetricCard
-            label="Postpaid"
-            value={stats.postpaid}
-            sub={`${Math.round((stats.postpaid / (stats.total || 1)) * 100)}% of total`}
-            accent="text-emerald-400"
-          />
-          <MetricCard
-            label="Fancy numbers"
-            value={stats.fancy}
-            sub="Tier 1–3 combined"
-            accent="text-violet-400"
-          />
-          <MetricCard label="Top network" value={stats.topNet} />
-          <MetricCard
-            label="Prepaid"
-            value={filtered.filter((r) => r.plan_type.toLowerCase().includes("pre")).length}
-            sub={`${Math.round((filtered.filter((r) => r.plan_type.toLowerCase().includes("pre")).length / (stats.total || 1)) * 100)}% of total`}
-            accent="text-amber-400"
-          />
-        </div>
-
-        {/* Company tabs */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-medium text-slate-600 uppercase tracking-widest mr-1">
-            Company
-          </span>
-          {companies.map((co) => (
-            <button
-              key={co}
-              onClick={() => setFilter("company", co)}
-              className={`company-tab ${filters.company === co ? companyActive[co] : companyIdle}`}
-            >
-              {companyLabels[co]}
-            </button>
-          ))}
-        </div>
-
-        {/* Tier cards */}
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {([1, 2, 3] as const).map((t) => (
-            <TierCard
-              key={t}
-              tier={t}
-              count={t === 1 ? stats.t1 : t === 2 ? stats.t2 : stats.t3}
-              active={filters.tier === t}
-              onClick={() => toggleTier(t)}
+          {/* Metrics */}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            <MetricCard
+              label="Total connections"
+              value={stats.total}
+              sub={filters.company || "All companies"}
             />
-          ))}
-        </div>
+            <MetricCard
+              label="Postpaid"
+              value={stats.postpaid}
+              sub={`${Math.round((stats.postpaid / (stats.total || 1)) * 100)}% of total`}
+              accent="text-emerald-400"
+            />
+            <MetricCard
+              label="Fancy numbers"
+              value={stats.fancy}
+              sub="Tier 1–3 combined"
+              accent="text-violet-400"
+            />
+            <MetricCard label="Top network" value={stats.topNet} />
+            <MetricCard
+              label="Prepaid"
+              value={filtered.filter((r) => r.plan_type.toLowerCase().includes("pre")).length}
+              sub={`${Math.round((filtered.filter((r) => r.plan_type.toLowerCase().includes("pre")).length / (stats.total || 1)) * 100)}% of total`}
+              accent="text-amber-400"
+            />
+          </div>
 
-        {/* Charts */}
-        <Charts data={filtered} />
+          {/* Company tabs */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-medium text-slate-600 uppercase tracking-widest mr-1">
+              Company
+            </span>
+            {companies.map((co) => (
+              <button
+                key={co}
+                onClick={() => setFilter("company", co)}
+                className={`company-tab ${filters.company === co ? companyActive[co] : companyIdle}`}
+              >
+                {companyLabels[co]}
+              </button>
+            ))}
+          </div>
 
-        {/* Table section */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-sm font-semibold ">CUG Connections</h2>
-              <span className="px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700 text-xs text-slate-400">
-                {filtered.length}
-              </span>
-              {filters.search || filters.company || filters.network || filters.plan || filters.tier !== null ? (
-                <button
-                  onClick={() => {
-                    setFilters({ search: "", company: "", network: "", plan: "", tier: null });
-                    setPage(1);
-                  }}
-                  className="text-xs text-indigo-400 transition-colors hover:text-indigo-300"
-                >
-                  Clear filters
-                </button>
-              ) : null}
+          {/* Tier cards */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {([1, 2, 3] as const).map((t) => (
+              <TierCard
+                key={t}
+                tier={t}
+                count={t === 1 ? stats.t1 : t === 2 ? stats.t2 : stats.t3}
+                active={filters.tier === t}
+                onClick={() => toggleTier(t)}
+              />
+            ))}
+          </div>
+
+          {/* Charts */}
+          <Charts data={filtered} />
+
+          {/* Table section */}
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2.5">
+                <h2 className="text-sm font-semibold">CUG Connections</h2>
+                <span className="px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700 text-xs text-slate-400">
+                  {filtered.length}
+                </span>
+                {filters.search || filters.company || filters.network || filters.plan || filters.tier !== null ? (
+                  <button
+                    onClick={() => {
+                      setFilters({ search: "", company: "", network: "", plan: "", tier: null });
+                      setPage(1);
+                    }}
+                    className="text-xs text-indigo-400 transition-colors hover:text-indigo-300"
+                  >
+                    Clear filters
+                  </button>
+                ) : null}
+              </div>
+            </div>
+            <ConnectionsTable
+              data={filtered}
+              page={page}
+              perPage={PER_PAGE}
+              onPageChange={setPage}
+            />
+          </section>
+        </main>
+      )}
+
+      {/* ── BILLING TAB ── */}
+      {activeTab === "billing" && (
+        <main className="px-6 py-6 mx-auto max-w-screen-2xl">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="text-lg font-bold text-slate-800">Billing Management</h2>
+              <p className="text-sm text-slate-500 mt-0.5">
+                Manage CUG plan amounts, start & expiry dates. Billing date: <strong>5th of each month</strong>.
+                Expiry alerts sent 4 → 3 → 2 → 1 day before.
+              </p>
             </div>
           </div>
-          <ConnectionsTable
-            data={filtered}
-            page={page}
-            perPage={PER_PAGE}
-            onPageChange={setPage}
-          />
-        </section>
-      </main>
+          <BillingTable data={connections} />
+        </main>
+      )}
     </div>
   );
 }

@@ -34,6 +34,11 @@ export default async function Home() {
       assignedTo: String((c.remark as Record<string, unknown>)?.assignedTo || ''),
       note: String((c.remark as Record<string, unknown>)?.note || ''),
     },
+    // Billing fields
+    billing_amount: typeof c.billing_amount === 'number' ? c.billing_amount : 0,
+    plan_start_date: c.plan_start_date ? new Date(c.plan_start_date as string).toISOString() : null,
+    plan_expiry_date: c.plan_expiry_date ? new Date(c.plan_expiry_date as string).toISOString() : null,
+    billing_status: (c.billing_status as Connection['billing_status']) ?? 'active',
   }))
 
   return <Dashboard connections={connections} userName={userName} />
