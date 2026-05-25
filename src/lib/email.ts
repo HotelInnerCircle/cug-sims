@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 
 const FROM_EMAIL = process.env.GMAIL_USER ?? 'rahulwebdeveloper12@gmail.com'
-const TO_EMAIL = 'hotelinnercircle12@gmail.com'
+const TO_EMAIL = 'broaddcast@gmail.com'
 
 function getTransporter() {
   return nodemailer.createTransport({

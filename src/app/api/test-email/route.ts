@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      sent_to: 'hotelinnercircle12@gmail.com',
+      sent_to: 'broaddcast@gmail.com',
       connections: connections.length,
       total_amount: totalAmount,
       expiry_date: expiryDate,
