@@ -1,7 +1,18 @@
 import nodemailer from 'nodemailer'
 
 const FROM_EMAIL = process.env.GMAIL_USER ?? 'rahulwebdeveloper12@gmail.com'
-const TO_EMAIL = 'broaddcast@gmail.com'
+
+// Per-company recipient mapping
+export const COMPANY_EMAIL_MAP: Record<string, string[]> = {
+  SAZ: ['saboomaruti293@gmail.com', 'rks.maruti@gmail.com'],
+  RKS: ['rks.maruti@gmail.com'],
+  HIC: ['hotelinnercircle12@gmail.com'],
+  BAC: ['broaddcast@gmail.com'],
+}
+
+export function getCompanyEmails(company: string): string[] {
+  return COMPANY_EMAIL_MAP[company] ?? ['broaddcast@gmail.com']
+}
 
 function getTransporter() {
   return nodemailer.createTransport({
@@ -33,18 +44,20 @@ function inr(n: number) {
   return `₹${n.toLocaleString('en-IN')}`
 }
 
-// One consolidated email — all connections, total, expiry warning
+// One consolidated email — all connections for a given company, total, expiry warning
 export async function sendConsolidatedBillingEmail({
   connections,
   daysRemaining,
   expiryDate,
   subject,
+  toEmails,
   isExpired = false,
 }: {
   connections: BillingConnection[]
   daysRemaining: number
   expiryDate: string
   subject: string
+  toEmails: string[]
   isExpired?: boolean
 }) {
   const totalAmount = connections.reduce((s, c) => s + (c.billing_amount ?? 0), 0)
@@ -73,7 +86,6 @@ export async function sendConsolidatedBillingEmail({
       </tr>
     `).join('')
 
-  // Connection rows — show all (capped at 250 in email body for readability)
   const showConns = connections.slice(0, 250)
   const connectionRows = showConns.map((c, i) => {
     const statusColor = (c.daysRemaining ?? 999) <= 0 ? '#dc2626'
@@ -240,7 +252,7 @@ export async function sendConsolidatedBillingEmail({
   const transporter = getTransporter()
   await transporter.sendMail({
     from: `"Saboo CUG Billing" <${FROM_EMAIL}>`,
-    to: TO_EMAIL,
+    to: toEmails.join(', '),
     subject,
     html,
   })

@@ -4,6 +4,53 @@ import { useState, useMemo } from 'react'
 import { Connection, getBillingStatusInfo, formatDate, companyColor, BillingStatus } from '@/lib/utils'
 import { BillingModal } from '@/components/BillingModal'
 
+function exportToCSV(data: Connection[], overrides: Map<string, { billing_amount: number; plan_start_date: string; plan_expiry_date: string }>) {
+  const fmtDate = (d: string | null | undefined) => {
+    if (!d) return ''
+    return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+  }
+  const billCycle = (start: string | null | undefined, expiry: string | null | undefined) => {
+    if (!start && !expiry) return ''
+    return `${fmtDate(start)} to ${fmtDate(expiry)}`
+  }
+  const headers = [
+    'Sl No', 'SIM Provider', 'Mobile Number', 'Bill Plan', 'Bill Cycle',
+    'Connection Type', 'Number Under', 'Employee Name', 'Company',
+    'Department', 'Designation', 'Location', 'Status',
+  ]
+  const rows = data.map((c, i) => {
+    const ov = c._id ? overrides.get(c._id) : undefined
+    const amount = ov?.billing_amount ?? c.billing_amount
+    const start  = ov?.plan_start_date  ?? c.plan_start_date
+    const expiry = ov?.plan_expiry_date ?? c.plan_expiry_date
+    const status = getBillingStatusInfo(expiry).label
+    return [
+      i + 1,
+      c.network || '',
+      c.mobile,
+      amount != null ? amount : '',
+      billCycle(start, expiry),
+      c.plan_type || '',
+      c.paid_by || '',
+      c.name || '',
+      c.company,
+      c.department || '',
+      c.designation || '',
+      c.location || '',
+      status,
+    ].map((v) => `"${String(v).replace(/"/g, '""')}"`)
+  })
+
+  const csv = [headers.map((h) => `"${h}"`).join(','), ...rows.map((r) => r.join(','))].join('\r\n')
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href     = url
+  a.download = `saboo-cug-billing-${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 interface BillingTableProps {
   data: Connection[]
 }
@@ -145,9 +192,10 @@ export function BillingTable({ data }: BillingTableProps) {
       const res = await fetch(`/api/test-email?secret=saboo-cug-cron-secret-2026`)
       const json = await res.json()
       if (json.success) {
+        const lines: string[] = json.emails_sent ?? []
         setTestResult({
           ok: true,
-          msg: `✓ Email sent to broaddcast@gmail.com — ${json.connections} plans · ₹${Number(json.total_amount).toLocaleString('en-IN')}/mo total`,
+          msg: `✓ ${lines.length} emails sent · ${json.connections} plans · ₹${Number(json.total_amount).toLocaleString('en-IN')}/mo — ${lines.join(' | ')}`,
         })
       } else {
         setTestResult({ ok: false, msg: json.error ?? 'Email failed.' })
@@ -218,15 +266,15 @@ export function BillingTable({ data }: BillingTableProps) {
             {checkResult}
           </span>
         )}
+   
         <button
-          onClick={seedAllPlans}
-          disabled={seeding}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors shadow-sm rounded-xl bg-sky-600 hover:bg-sky-700 disabled:opacity-50"
+          onClick={() => exportToCSV(data, billingOverrides)}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-colors shadow-sm rounded-xl bg-teal-600 hover:bg-teal-700"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          {seeding ? 'Setting…' : 'Set All ₹399'}
+          Export CSV
         </button>
         <button
           onClick={sendTestEmail}
@@ -309,31 +357,28 @@ export function BillingTable({ data }: BillingTableProps) {
 
                       {/* Plan Amount */}
                       <td className="px-5 py-4">
-                        {billing.billing_amount > 0 ? (
+                        {billing.billing_amount != null && billing.billing_amount > 0 ? (
                           <span className="font-bold text-slate-800">
                             ₹{billing.billing_amount.toLocaleString('en-IN')}
                             <span className="text-xs font-normal text-slate-400">/mo</span>
                           </span>
                         ) : (
-                          <span className="text-xs text-slate-400">Not set</span>
+                          <span className="text-slate-300">—</span>
                         )}
                       </td>
 
                       {/* Start Date */}
                       <td className="px-5 py-4 whitespace-nowrap">
-                        <span className="text-xs text-slate-600">{formatDate(billing.plan_start_date)}</span>
+                        {billing.plan_start_date
+                          ? <span className="text-xs text-slate-600">{formatDate(billing.plan_start_date)}</span>
+                          : <span className="text-slate-300">—</span>}
                       </td>
 
                       {/* Expiry Date */}
                       <td className="px-5 py-4 whitespace-nowrap">
-                        {billing.plan_expiry_date ? (
-                          <div>
-                            <span className="text-xs font-semibold text-slate-800">{formatDate(billing.plan_expiry_date)}</span>
-                            <p className="text-slate-400 text-[11px] mt-0.5">Billing: 5th of month</p>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-slate-400">Not set</span>
-                        )}
+                        {billing.plan_expiry_date
+                          ? <span className="text-xs font-semibold text-slate-800">{formatDate(billing.plan_expiry_date)}</span>
+                          : <span className="text-slate-300">—</span>}
                       </td>
 
                       {/* Status */}

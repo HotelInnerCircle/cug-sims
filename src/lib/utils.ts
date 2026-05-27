@@ -8,7 +8,7 @@ export interface Remark {
 
 export interface Connection {
   _id?: string;
-  company: "HIC" | "RKS" | "SAZ";
+  company: "HIC" | "RKS" | "SAZ" | "BAC";
   mobile: string;
   name: string;
   designation: string;
@@ -75,6 +75,7 @@ export function companyColor(c: string) {
   if (c === "HIC") return "text-sky-800 bg-sky-100 border-sky-300";
   if (c === "RKS") return "text-teal-800 bg-teal-100 border-teal-300";
   if (c === "SAZ") return "text-amber-800 bg-amber-100 border-amber-300";
+  if (c === "BAC") return "text-purple-800 bg-purple-100 border-purple-300";
   return "text-slate-600 bg-slate-100 border-slate-300";
 }
 
