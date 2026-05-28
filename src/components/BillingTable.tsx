@@ -73,6 +73,7 @@ export function BillingTable({ data }: BillingTableProps) {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<BillingStatus | ''>('')
+  const [companyFilter, setCompanyFilter] = useState('')
   const [editingConn, setEditingConn] = useState<Connection | null>(null)
   const [billingOverrides, setBillingOverrides] = useState(
     new Map<string, { billing_amount: number; plan_start_date: string; plan_expiry_date: string }>()
@@ -101,9 +102,10 @@ export function BillingTable({ data }: BillingTableProps) {
         const info = getBillingStatusInfo(expiryDate)
         if (info.status !== statusFilter) return false
       }
+      if (companyFilter && c.company !== companyFilter) return false
       return true
     })
-  }, [data, search, statusFilter, billingOverrides])
+  }, [data, search, statusFilter, companyFilter, billingOverrides])
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE) || 1
   const slice = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
@@ -247,6 +249,17 @@ export function BillingTable({ data }: BillingTableProps) {
           <option value="active">Active</option>
           <option value="expiring_soon">Expiring Soon</option>
           <option value="expired">Expired</option>
+        </select>
+        <select
+          value={companyFilter}
+          onChange={(e) => { setCompanyFilter(e.target.value); setPage(1) }}
+          className="filter-input"
+        >
+          <option value="">All Companies</option>
+          <option value="HIC">HIC</option>
+          <option value="RKS">RKS</option>
+          <option value="SAZ">SAZ</option>
+          <option value="BAC">BAC</option>
         </select>
 
         <div className="flex-1" />
